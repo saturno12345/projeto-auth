@@ -36,4 +36,3 @@
     "typescript": "^5"
   }
 }
-"devDependencies": {  "prisma": "^5.x.x"
