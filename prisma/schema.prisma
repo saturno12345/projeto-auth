@@ -10,5 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Categorias {
+  id String @id @default(uuid())
+  nome String
+}
 
 
