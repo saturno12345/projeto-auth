@@ -89,7 +89,6 @@ model Pedidos {
   nome       String
   endereco   String
   telefone   String
-  produtos   Produtos[] @relation("PedidoProdutos")
 }
 
 
