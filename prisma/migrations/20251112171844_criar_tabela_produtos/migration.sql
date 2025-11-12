@@ -1,16 +1,16 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE `user` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `emailVerified` BOOLEAN NOT NULL DEFAULT false,
+    `image` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-  - You are about to drop the column `password` on the `user` table. All the data in the column will be lost.
-  - Made the column `name` on table `user` required. This step will fail if there are existing NULL values in that column.
-
-*/
--- AlterTable
-ALTER TABLE `user` DROP COLUMN `password`,
-    ADD COLUMN `emailVerified` BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN `image` VARCHAR(191) NULL,
-    MODIFY `name` VARCHAR(191) NOT NULL,
-    MODIFY `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3);
+    UNIQUE INDEX `user_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `session` (
@@ -58,12 +58,30 @@ CREATE TABLE `verification` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Categorias` (
+    `id` VARCHAR(191) NOT NULL,
+    `nome` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Produtos` (
+    `id` VARCHAR(191) NOT NULL,
+    `nome` VARCHAR(191) NOT NULL,
+    `preco` DOUBLE NOT NULL,
+    `descricao` VARCHAR(191) NULL,
+    `categoriaId` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `session` ADD CONSTRAINT `session_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `account` ADD CONSTRAINT `account_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
--- RedefineIndex
-CREATE UNIQUE INDEX `user_email_key` ON `user`(`email`);
-DROP INDEX `User_email_key` ON `user`;
+-- AddForeignKey
+ALTER TABLE `Produtos` ADD CONSTRAINT `Produtos_categoriaId_fkey` FOREIGN KEY (`categoriaId`) REFERENCES `Categorias`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
