@@ -82,7 +82,6 @@ model Produtos {
   descricao    String?
   categoriaId  String
   categoria    Categorias @relation(fields: [categoriaId], references: [id])
-  pedidos      Pedidos[]    @relation("PedidoProdutos")
 }
 
 model Pedidos {
