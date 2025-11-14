@@ -1,58 +1,55 @@
-'use server'
-
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import prisma from '@/lib/prisma-client'
-import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
+import AddCategorias from './_components/add-produto'
+import EditCategoria from './_components/edit-produto'
+import DeleteCategoria from './_components/delete-produto'
 
-const produtoSchema = z.object({
-  nome: z.string().min(1, 'O nome é obrigatório'),
-  preco: z.coerce.number().positive('O preço deve ser maior que zero'),
-  descricao: z.string().optional(),
-  categoriaId: z.string().uuid('Selecione uma categoria válida'),
-})
+export default async function CategoriasPage() {
+  const produtos = await prisma.produtos.findMany({
+    orderBy: {
+      nome: 'asc'
+    }
+  })
 
-export async function criarProduto(formData: FormData) {
-  const data = Object.fromEntries(formData)
-  const result = produtoSchema.safeParse(data)
+  return (
+    <div className="space-y-6">
+      {/* Cabeçalho */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Produtos</h1>
+        <AddCategorias />
+      </div>
 
-  if (!result.success) {
-    const firstError = result.error.issues[0]?.message || 'Erro de validação'
-    return { error: firstError }
-  }
+      {/* Caso não existam categorias */}
+      {produtos.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed p-8 text-center text-muted-foreground">
+          <p>Nenhuma categoria cadastrada</p>
+          <p className="text-sm">
+            Clique em "Adicionar Categoria" para criar sua primeira categoria.
+          </p>
+        </div>
+      ) : (
+        // Lista de categorias
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {produtos.map((produto) => (
+            <Card key={produto.id} className="transition-shadow hover:shadow-md">
+              <CardHeader className="pb-3">
+                <CardTitle className="line-clamp-1 text-lg">
+                  {produto.nome}
+                </CardTitle>
+              </CardHeader>
 
-  try {
-    await prisma.produtos.create({ data: result.data })
-    revalidatePath('/painel/produtos')
-    return { success: true }
-  } catch {
-    return { error: 'Erro ao criar produto' }
-  }
-}
+              <CardContent className="pb-3">
+                <p className="text-xs text-muted-foreground">ID: {produto.id}</p>
+              </CardContent>
 
-export async function editarProduto(id: string, formData: FormData) {
-  const data = Object.fromEntries(formData)
-  const result = produtoSchema.safeParse(data)
-
-  if (!result.success) {
-    const firstError = result.error.issues[0]?.message || 'Erro de validação'
-    return { error: firstError }
-  }
-
-  try {
-    await prisma.produtos.update({ where: { id }, data: result.data })
-    revalidatePath('/painel/produtos')
-    return { success: true }
-  } catch {
-    return { error: 'Erro ao editar produto' }
-  }
-}
-
-export async function excluirProduto(id: string) {
-  try {
-    await prisma.produtos.delete({ where: { id } })
-    revalidatePath('/painel/produtos')
-    return { success: true }
-  } catch {
-    return { error: 'Erro ao excluir produto' }
-  }
+              <CardFooter className="flex items-center justify-end gap-2">
+                <EditCategoria categoria={produto} />
+                <DeleteCategoria produto={produto} />
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }

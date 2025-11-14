@@ -1,7 +1,21 @@
-export default function ProdutosPage() {
+import prisma from "@/lib/prisma-client"
+import { columns } from './columns'
+import { DataTable } from '@/components/ui/data-table'
+import AddPedido from './_components/add_pedido'
+
+export default async function PedidosPage() {
+  const pedidos = await prisma.pedidos.findMany({
+    include: { produtos: true },
+    orderBy: { nome: 'asc' },
+  })
+
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">Página de Produtos</h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Pedidos</h1>
+        <AddPedido />
+      </div>
+      <DataTable columns={columns} data={pedidos} />
     </div>
-  );
+  )
 }

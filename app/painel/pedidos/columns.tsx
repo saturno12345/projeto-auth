@@ -1,53 +1,26 @@
 'use client'
 
 import { ColumnDef } from "@tanstack/react-table"
-import DeletePedido from "./_components/delete-pedido"
 import EditPedido from "./_components/edit-pedido"
+import DeletePedido from "./_components/delete-pedido"
 
-
-// Defina o tipo diretamente aqui
-type Pedido = {
-  id: string
-  nome: string
-  endereco: string
-  telefone: string
-  produtos: { id: string; nome: string }[]
-  createdAt: Date
-  updatedAt: Date
-}
-
-export const columns: ColumnDef<Pedido>[] = [
-  { 
-    accessorKey: "nome", 
-    header: "Cliente" 
-  },
-  { 
-    accessorKey: "endereco", 
-    header: "Endereço" 
-  },
-  { 
-    accessorKey: "telefone", 
-    header: "Telefone" 
-  },
+export const columns: ColumnDef<any>[] = [
+  { accessorKey: "nome", header: "Cliente" },
+  { accessorKey: "endereco", header: "Endereço" },
+  { accessorKey: "telefone", header: "Telefone" },
   {
     id: "produtos",
     header: "Produtos",
-    cell: ({ row }) => {
-      const produtos = row.original.produtos
-      return produtos.map((p) => p.nome).join(", ")
-    },
+    cell: ({ row }) => row.original.produtos.map((p: any) => p.nome).join(", "),
   },
   {
-    id: "actions",
+    id: "acoes",
     header: "Ações",
-    cell: ({ row }) => {
-      const pedido = row.original
-      return (
-        <div className="flex gap-2">
-          <EditPedido pedido={pedido} />
-          <DeletePedido pedido={pedido} />
-        </div>
-      )
-    },
-  },
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <EditPedido pedido={row.original} />
+        <DeletePedido pedido={row.original} />
+      </div>
+    ),
+  }
 ]
