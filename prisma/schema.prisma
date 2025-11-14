@@ -85,10 +85,13 @@ model Produtos {
 }
 
 model Pedidos {
-  id         String     @id @default(uuid())
+  id         String    @id @default(uuid())
   nome       String
   endereco   String
   telefone   String
+  produtos   Produtos[] // Relacionamento many-to-many
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 
