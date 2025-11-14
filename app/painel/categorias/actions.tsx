@@ -17,7 +17,9 @@ export async function criarCategoria(formData: FormData) {
       },
     })
 
+    // REVALIDA AMBAS AS PÁGINAS
     revalidatePath('/painel/categorias')
+    revalidatePath('/painel/produtos') // ← LINHA IMPORTANTE
     return { success: true }
   } catch (error) {
     console.error('Erro ao criar categoria:', error)
@@ -40,7 +42,9 @@ export async function editarCategoria(id: string, formData: FormData) {
       },
     })
 
+    // REVALIDA AMBAS AS PÁGINAS
     revalidatePath('/painel/categorias')
+    revalidatePath('/painel/produtos') // ← LINHA IMPORTANTE
     return { success: true }
   } catch (error) {
     console.error('Erro ao editar categoria:', error)
@@ -54,7 +58,9 @@ export async function excluirCategoria(id: string) {
       where: { id },
     })
 
+    // REVALIDA AMBAS AS PÁGINAS
     revalidatePath('/painel/categorias')
+    revalidatePath('/painel/produtos') // ← LINHA IMPORTANTE
     return { success: true }
   } catch (error) {
     console.error('Erro ao excluir categoria:', error)
