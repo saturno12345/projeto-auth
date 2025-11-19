@@ -17,25 +17,27 @@ import { useState, useTransition } from 'react'
 import { editarProduto } from '../actions'
 import { toast } from 'sonner'
 
-interface EditCategoriaProps {
-  categoria: {
+interface EditProdutoProps {
+  produto: {
     id: string
     nome: string
+    preco?: number
+    descricao?: string | null
   }
 }
 
-export default function EditCategoria({ categoria }: EditCategoriaProps) {
+export default function EditProduto({ produto }: EditProdutoProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   async function handleSubmit(formData: FormData) {
     startTransition(async () => {
-      const result = await editarProduto(categoria.id, formData)
+      const result = await editarProduto(produto.id, formData)
 
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('Categoria atualizada com sucesso!')
+        toast.success('Produto atualizado com sucesso!')
         setOpen(false)
       }
     })
@@ -48,27 +50,57 @@ export default function EditCategoria({ categoria }: EditCategoriaProps) {
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Editar Categoria</DialogTitle>
+          <DialogTitle>Editar Produto</DialogTitle>
           <DialogDescription>
-            Altere o nome da categoria.
+            Altere os dados do produto.
           </DialogDescription>
         </DialogHeader>
+
         <form action={handleSubmit}>
           <div className="space-y-4 py-4">
+
+            {/* Nome */}
             <div className="space-y-2">
-              <Label htmlFor="nome">Nome da Categoria</Label>
+              <Label htmlFor="nome">Nome do Produto</Label>
               <Input
                 id="nome"
                 name="nome"
-                defaultValue={categoria.nome}
-                placeholder="Ex: Pizzas, Bebidas, Sobremesas..."
+                defaultValue={produto.nome}
                 required
                 disabled={isPending}
               />
             </div>
+
+            {/* Preço (caso queira manter, senão pode remover) */}
+            {produto.preco !== undefined && (
+              <div className="space-y-2">
+                <Label htmlFor="preco">Preço</Label>
+                <Input
+                  id="preco"
+                  name="preco"
+                  type="number"
+                  step="0.01"
+                  defaultValue={produto.preco}
+                  disabled={isPending}
+                />
+              </div>
+            )}
+
+            {/* Descrição */}
+            <div className="space-y-2">
+              <Label htmlFor="descricao">Descrição</Label>
+              <Input
+                id="descricao"
+                name="descricao"
+                defaultValue={produto.descricao || ''}
+                disabled={isPending}
+              />
+            </div>
           </div>
+
           <DialogFooter>
             <Button
               type="button"
@@ -78,6 +110,7 @@ export default function EditCategoria({ categoria }: EditCategoriaProps) {
             >
               Cancelar
             </Button>
+
             <Button type="submit" disabled={isPending}>
               {isPending ? 'Salvando...' : 'Salvar Alterações'}
             </Button>
