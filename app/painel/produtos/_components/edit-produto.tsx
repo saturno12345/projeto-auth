@@ -24,9 +24,10 @@ interface EditProdutoProps {
     preco?: number
     descricao?: string | null
   }
+  categorias: { id: string; nome: string }[]
 }
 
-export default function EditProduto({ produto }: EditProdutoProps) {
+export default function EditProduto({ produto, categorias }: EditProdutoProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
@@ -100,6 +101,7 @@ export default function EditProduto({ produto }: EditProdutoProps) {
               />
             </div>
           </div>
+
 
           <DialogFooter>
             <Button
